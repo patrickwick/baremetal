@@ -1,0 +1,9 @@
+# NOTE: refer to Makefile, cargo is **not** used! It's only here because rust analyzer requires it
+[package]
+name = "baremetal"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+path = "main.rs"
