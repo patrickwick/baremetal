@@ -1,9 +1,9 @@
 BUILD_DIR=build
-ISO=${BUILD_DIR}/entry.iso
 
 BOOT_OBJ=${BUILD_DIR}/boot_x86_64.o
 MAIN_OBJ=${BUILD_DIR}/main.o
 BIN=${BUILD_DIR}/iso/boot/entry.bin
+ISO=${BUILD_DIR}/entry.iso
 
 LD=ld
 LD_FLAGS+=-n
@@ -79,7 +79,7 @@ ${ISO}: ${MAIN_OBJ} ${BOOT_OBJ} ${BUILD_DIR}
 	mkdir -p ${BUILD_DIR}/iso/boot/grub
 	cp boot/grub.cfg ${BUILD_DIR}/iso/boot/grub
 	${LD} ${LD_FLAGS} -o ${BIN} --script boot/linker.ld ${MAIN_OBJ} ${BOOT_OBJ}
-	grub-mkrescue -v -o ${ISO} ${BUILD_DIR}/iso
+	grub-mkrescue -o ${ISO} ${BUILD_DIR}/iso
 
 .PHONY: qemu
 qemu: ${ISO} ${QEMU_FIRMWARE} ## Run Qemu emulation
