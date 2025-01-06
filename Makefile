@@ -25,6 +25,7 @@ RUSTC_FLAGS+=-C debuginfo=2
 RUSTC_FLAGS+=-C opt-level=0
 RUSTC_FLAGS+=-C no-redzone=true
 RUSTC_FLAGS+=-C panic=abort
+RUSTC_FLAGS+=-C lto=false
 
 QEMU=qemu-system-x86_64
 QEMU_FLAGS+=-cpu max
@@ -59,6 +60,9 @@ all: qemu
 help: ## Prints help for targets with comments
 	@cat $(MAKEFILE_LIST) | grep -E '^[a-zA-Z_-]+:.*?## .*$$' | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+clean: ## Remove build directory
+	rm -rf ${BUILD_DIR}
+
 firmware: ${QEMU_FIRMWARE} ## Build firmware
 ${QEMU_FIRMWARE}:
 	./install-edk2.sh
@@ -72,13 +76,13 @@ ${BOOT_OBJ}: boot/boot_x86_64.asm ${BUILD_DIR}
 
 .PHONY: ${MAIN_OBJ}
 ${MAIN_OBJ}: ${BUILD_DIR}
-	${RUSTC} --emit obj ${RUSTC_FLAGS} -o ${MAIN_OBJ} ./main.rs
+	${RUSTC} --crate-type staticlib ${RUSTC_FLAGS} -o ${MAIN_OBJ} ./main.rs
 
 ${ISO}: ${MAIN_OBJ} ${BOOT_OBJ} ${BUILD_DIR}
 	# NOTE: must use iso/boot subdirectory due to grub-mkrescue / xorriso magic
 	mkdir -p ${BUILD_DIR}/iso/boot/grub
 	cp boot/grub.cfg ${BUILD_DIR}/iso/boot/grub
-	${LD} ${LD_FLAGS} -o ${BIN} --script boot/linker.ld ${MAIN_OBJ} ${BOOT_OBJ}
+	${LD} ${LD_FLAGS} -o ${BIN} --script boot/linker.ld ${BOOT_OBJ} ${MAIN_OBJ}
 	grub-mkrescue -o ${ISO} ${BUILD_DIR}/iso
 
 .PHONY: qemu
