@@ -36,21 +36,21 @@ fn initialize_essentials(_multiboot2_info_physical_address: u64) {
     const DEFAULT_DIVISOR: u16 = 12; // 115200 / DEFAULT_BAUD (9600);
     const DIVISOR_LATCH_LOW: u16 = 0;
     const DIVISOR_LATCH_HIGH: u16 = 1;
-    const DLAB: u8 = 0x80;
+    const DIVISOR_LATCH_BIT: u8 = 1 << 7;
 
     // COM1 / ttyS0 / QEMU serial0
     let port: SerialPort = SerialPort::Com1;
 
-    outb(0x3, port_command(port, Command::LineControl));
-    outb(0x0, port_command(port, Command::InterruptEnable));
-    outb(0x0, port_command(port, Command::InterruptIdFifoControl));
-    outb(0x3, port_command(port, Command::ModemControl));
+    outb(0x03, port_command(port, Command::LineControl));
+    outb(0x00, port_command(port, Command::InterruptEnable));
+    outb(0x00, port_command(port, Command::InterruptIdFifoControl));
+    outb(0x03, port_command(port, Command::ModemControl));
 
     let control = inb(port_command(port, Command::LineControl));
-    outb(control | DLAB, port_command(port, Command::LineControl));
+    outb(control | DIVISOR_LATCH_BIT, port_command(port, Command::LineControl));
     outb((DEFAULT_DIVISOR & 0xff) as u8, port as u16 + DIVISOR_LATCH_LOW);
     outb(((DEFAULT_DIVISOR >> 8) & 0xff) as u8, port as u16 + DIVISOR_LATCH_HIGH);
-    outb(control & (!DLAB), port_command(port, Command::LineControl));
+    outb(control & (!DIVISOR_LATCH_BIT), port_command(port, Command::LineControl));
 
     // test
     outb(b't', port as u16);

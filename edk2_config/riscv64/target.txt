@@ -1,8 +1,0 @@
-ACTIVE_PLATFORM = OvmfPkg/RiscVVirt/RiscVVirtQemu.dsc
-TARGET          = DEBUG
-TARGET_ARCH     = RISCV64
-BUILD_RULE_CONF = Conf/build_rule.txt
-
-# Available toolchains are listed in the below TOOL_CHAIN_CONF file
-TOOL_CHAIN_TAG  = CLANGDWARF
-TOOL_CHAIN_CONF = Conf/tools_def.txt

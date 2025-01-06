@@ -53,7 +53,7 @@ QEMU_FLAGS+=-D ${BUILD_DIR}/qemu_log.txt
 # dump network packets
 QEMU_FLAGS+=-object filter-dump,id=n2,netdev=n2,file=./build/virtio_network.dump
 
-QEMU_FIRMWARE=./edk2/Build/OvmfX64/DEBUG_GCC5/FV/OVMF.fd
+QEMU_FIRMWARE=./edk2/Build/OvmfX64/DEBUG_CLANGDWARF/FV/OVMF.fd
 
 all: qemu
 

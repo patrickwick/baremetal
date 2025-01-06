@@ -22,7 +22,20 @@ fi
 
 cd ${EDK2_DIR}
 source ./edksetup.sh
-cp -r ../${EDK2_CONFIG}/target.txt ./Conf/target.txt
+
+# base tools
 make -j$(nproc) --directory ./BaseTools
 export EDK_TOOLS_PATH=$(pwd)/BaseTools
-build --conf=./Conf
+cp ../${EDK2_CONFIG}/target.txt ./Conf/target.txt
+
+# X64
+build --conf=./Conf \
+	--platform=OvmfPkg/OvmfPkgX64.dsc \
+	--arch=X64 \
+	--tagname=CLANGDWARF
+
+# RISCV64
+build --conf=./Conf \
+	--platform=OvmfPkg/RiscVVirt/RiscVVirtQemu.dsc \
+	--arch=RISCV64 \
+	--tagname=CLANGDWARF
